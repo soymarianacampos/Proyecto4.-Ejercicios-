@@ -1,0 +1,182 @@
+EJERCICIO 1
+{$MODE OBJFPC} 
+program untitled;
+
+uses crt,sysutils;
+Type
+Reporte = Record
+	id: integer;
+	titulo: string;
+	categoria: string;
+	contenido: string;
+	Fecha: string;
+	Status: boolean;
+end;
+
+
+procedure registrarReporte(reporteRegistrar: Reporte);
+var 
+	status, idstring: string;
+	id: integer;
+	fichero: text;
+begin
+	try begin
+		write('Introduzca el id numerico: ');
+		readln(reporteRegistrar.id);
+		write('Introduzca el titulo: ');
+		readln(reporteRegistrar.titulo);
+		write('Introduzca la categoria: ');
+		readln(reporteRegistrar.categoria);
+		try
+			MkDir(LowerCase(reporteRegistrar.categoria));
+		except
+			on E: Exception do if(E.ClassName = 'EInOutError') and (E.Message <> 'Access denied') then begin
+				writeln('No es posible crear una nueva carpeta con dicho nombre de categoria, intentelo de nuevo...');
+				exit
+			end;
+		end;
+		Str(reporteRegistrar.id, idstring);
+		if FileExists(Concat(reporteRegistrar.categoria,'\',idstring, '.txt')) then begin
+			writeln('En dicha categoria ya existe un fichero con el id ingresado...');
+			exit;
+		end;
+		write('Introduzca el contenido: ');
+		readln(reporteRegistrar.contenido);
+		write('Introduzca la fecha: ');
+		readln(reporteRegistrar.Fecha);
+		repeat
+			write('Introduzca el estado (activo o inactivo): ');
+			readln(status);
+		until(LowerCase(status) = 'activo') or (LowerCase(status) = 'inactivo');
+		if(status = 'activo') then begin
+			reporteRegistrar.Status := true;
+		end
+		else begin
+			reporteRegistrar.Status := false;
+		end;
+		
+		assign(fichero, Concat(reporteRegistrar.categoria,'\',idstring, '.txt'));
+		rewrite(fichero);
+		writeLn(fichero, Concat('--- ', reporteRegistrar.titulo,' ---'));
+		writeLn(fichero);
+		writeLn(fichero, reporteRegistrar.contenido);
+		writeLn(fichero);
+		writeLn(fichero, Concat('Fecha del reporte: ', reporteRegistrar.Fecha));
+		if(status = 'activo') then begin
+			writeLn(fichero, 'Estado: Activo');
+		end
+		else begin
+			writeLn(fichero, 'Estado: Inactivo');
+		end;
+		close( fichero ); 
+	end
+	except
+		writeln('Se ha abortado la creación del registro debido a que la informacion insertada no es admitida...');
+		exit;
+	end;
+	writeln('El registro ha sido creado con exito!!!');
+end;
+
+var 
+	rep: Reporte;
+	opcion: char;
+BEGIN
+	repeat
+		writeln('CREANDO NUEVO REPORTE');
+		writeln();
+		registrarReporte(rep);
+		writeln();
+		write('Si desea crear un nuevo reporte, introduzca 1: ');
+		readln(opcion);
+		writeln();
+	until(opcion <> '1');
+END.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EJERCICIO 2
+La sentencia EOF retorna un valor booleano el cual varia según el estado de un puntero sobre un archivo el cual se está recorriendo, en ese sentido retorna True en caso de que dicho puntero que está recorriendo el archivo en cuestión llega al final o al punto en el que el archivo ya se encuentra vacío, y False en caso de encontrarse en una posición donde el archivo tiene algún tipo de información.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EJERCICIO 3
+program untitled;
+
+uses crt;
+
+var
+	i, numero, fibonacci1, fibonacci2: integer;
+	fichero: text;
+BEGIN
+	assign(fichero, 'fibonacci.txt');
+	rewrite(fichero);
+	repeat
+		write('Introduzca un numero para calcular la susecion de Fibonacci (mayor a 1): ');
+		readln(numero);
+	until(numero > 1);
+	writeln();
+	fibonacci1 := 1;
+	fibonacci2 := 2;
+	writeln(fibonacci1);
+	writeln(fichero, fibonacci1);
+	for i := 2 to numero do begin
+		writeln(fibonacci2);
+		writeln(fichero, fibonacci2);
+		fibonacci2 := fibonacci1 + fibonacci2;
+		fibonacci1 := fibonacci2 - fibonacci1;
+	end;
+	writeln();
+	close( fichero ); 
+	writeln('La susecion ha sido guardada en el archivo fibonacci.txt');
+END.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+EJERCICIO 4
+AssignFile(archivo, "archivo.txt");
+rewrite(archivo);
+writeln(archivo,"hola mundo");
+close(archivo);
+reset(archivo);
+eof(archivo);
+writeln(archivo."hola mundo");
+
+NOTA: la funcion correcta para asignar el archivo es "assign"

@@ -1,0 +1,9 @@
+AssignFile(archivo, "archivo.txt");
+rewrite(archivo);
+writeln(archivo,"hola mundo");
+close(archivo);
+reset(archivo);
+eof(archivo);
+writeln(archivo."hola mundo");
+
+NOTA: la funcion correcta para asignar el archivo es "assign"
